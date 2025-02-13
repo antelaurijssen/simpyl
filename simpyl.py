@@ -1,10 +1,9 @@
 #! /usr/bin/python
-
 # Title: SimPyL
 # Description: Simple Python Logger
 # Author: Ante Laurijssen VA2BBW <va2bbw@gmail.com>
 # Date Created (yyyy-mm-dd): 2014-05-19
-# Version: 0.9
+# Version: 0.9.1
 # Copyright: (C) 2014 Ante Laurijssen
 # Licence: GPLv3
 
@@ -38,7 +37,7 @@ as an every day logger for ham radio operators, as well as a contest logger.
 
 # python module imports
 
-from __future__ import absolute_import
+
 
 import os
 import sys
@@ -50,11 +49,11 @@ except ImportError:
 
 import collections
 import re
-import prettytable
 import sqlite3
-import ConfigParser
+import configparser
 import datetime
 import time
+import prettytable
 
 # my module imports
 
@@ -68,7 +67,7 @@ home_folder = os.path.expanduser("~") + "/.simpyl"
     
 # configuration parser
 
-Config = ConfigParser.ConfigParser()
+Config = configparser.ConfigParser()
 Config.read(home_folder + "/simpyl.conf")
 Config.sections()
 
@@ -79,9 +78,9 @@ def ConfigSectionMap(section):
         try:
             dict1[option] = Config.get(section, option)
             if dict1[option] == -1:
-                DebugPrint("skip: %s" % option)
+                print("skip: %s" % option)
         except:
-            print("exception on %s!" % option)
+            print(("exception on %s!" % option))
             dict1[option] = None
     return dict1
 
@@ -104,49 +103,49 @@ class Log(object):
         """
         This method prompts the user to choose his log file, and also opens the sqlite3 connecion to that log database.
         """
-        self.name = raw_input("\nPlease choose a log file (type 'l' for list) : ")
+        self.name = input("\nPlease choose a log file (type 'l' for list) : ")
         while self.name == "":
             self.choose()
         if self.name == "l":
             for f in os.listdir(home_folder):
                 if f.endswith(".db"):
-                    print("\n" + f)
+                    print(("\n" + f))
             self.name = ""
             self.choose()
         elif self.name.endswith(".db"):
             if self.name in os.listdir(home_folder):
                 self.connect()
-                print("\nYou have chosen: %s" % (self.name))
+                print(("\nYou have chosen: %s" % (self.name)))
                 enter()
                 start_main_menu()
             else:
                 choice = 0
                 while choice != "y" and choice != "n":
-                    choice = raw_input("\nLog %s does not exist. Would you like to create it? (y/n): " % (self.name))
+                    choice = input("\nLog %s does not exist. Would you like to create it? (y/n): " % (self.name))
                 if choice == "n":
-                    print("\nLog %s not created" % (self.name))
+                    print(("\nLog %s not created" % (self.name)))
                     self.choose()
                 elif choice == "y":
                     self.connect()
-                    print("\nLog %s created! " % (self.name))
+                    print(("\nLog %s created! " % (self.name)))
                     start_main_menu()
         else:
             self.name = self.name + ".db"
             if self.name in os.listdir(home_folder):
                 self.connect()
-                print("\nYou have chosen: %s" % (self.name))
+                print(("\nYou have chosen: %s" % (self.name)))
                 enter()
                 start_main_menu()
             else:
                 choice = 0
                 while choice != "y" and choice != "n":
-                    choice = raw_input("\nLog %s does not exist. Would you like to create it? (y/n): " % (self.name))
+                    choice = input("\nLog %s does not exist. Would you like to create it? (y/n): " % (self.name))
                 if choice == "n":
-                    print("\nLog %s not created" % (self.name))
+                    print(("\nLog %s not created" % (self.name)))
                     self.choose()
                 elif choice == "y":
                     self.connect()
-                    print("\nLog %s created! " % (self.name))
+                    print(("\nLog %s created! " % (self.name)))
                     start_main_menu()
 
     def format_fields(self, l):
@@ -190,10 +189,10 @@ class Log(object):
         """
         if self.call == "":
             while self.call == "":
-                self.call = raw_input("\nPlease enter your callsign: ").upper()
+                self.call = input("\nPlease enter your callsign: ").upper()
             start_main_menu()
         else:
-            self.call = raw_input("\nPlease enter new callsign: ").upper()
+            self.call = input("\nPlease enter new callsign: ").upper()
         start_main_menu()
 
     def add_qso(self):
@@ -202,16 +201,16 @@ class Log(object):
         """
         qso_data = []
         for field in self.qso_fields:
-            data = raw_input("\n%s (default: *): " % (field)).upper()
+            data = input("\n%s (default: *): " % (field)).upper()
             qso_data.append(data)
-        self.check(dict(zip(self.qso_fields, qso_data)))
+        self.check(dict(list(zip(self.qso_fields, qso_data))))
         qso_data_rows = []
         qso_data_rows.append(qso_data)
         my_table = Table("New QSO", self.qso_fields, qso_data_rows)
-        print(my_table.draw())
+        print((my_table.draw()))
         choice = 0
         while choice != "" and choice != "c":
-            choice = raw_input("\nPress enter to write QSO to database or 'c' to cancel: ")
+            choice = input("\nPress enter to write QSO to database or 'c' to cancel: ")
         if choice == "c":
             print("\nThis new QSO has not been entered")
             enter()
@@ -225,13 +224,13 @@ class Log(object):
         This method searches for the specified callsign in the QSO database and returns all the QSOs.
         The info is then used to create a pretty table showing the QSOs.
         """
-        call = raw_input("\nPlease enter a callsign to search: ").upper()
+        call = input("\nPlease enter a callsign to search: ").upper()
         clear_screen()
         rows = []
         for row in self.c.execute("SELECT {f} FROM log WHERE Call = ? ORDER BY QSO_Date DESC, Time_On DESC".format(f = self.format_fields(self.visible_fields)), (call,)):
             rows.append(row)
         my_table = Table("QSOs with %s" % (call), self.visible_fields, rows)
-        print(my_table.draw())
+        print((my_table.draw()))
         enter()
         log_menu.draw()
 
@@ -244,7 +243,7 @@ class Log(object):
         for row in self.c.execute("SELECT {f} FROM log ORDER BY QSO_Date DESC, Time_On DESC LIMIT 5".format(f = self.format_fields(self.visible_fields))):
             rows.append(row)
         my_table = Table("Last 5 QSOs", self.visible_fields, rows)
-        print(my_table.draw())
+        print((my_table.draw()))
 
     def adif_parse(self, fn):
         """
@@ -257,7 +256,7 @@ class Log(object):
         logbook =[]
         for record in raw:
             qso = {}
-            tags = re.findall('<(.*?):(\d+).*?>([^<\t\n\r\f\v\Z]+)',record)
+            tags = re.findall(r'<(.*?):(\d+).*?>([^<\t\n\r\f\v\Z]+)',record)
             for tag in tags:
                 qso[tag[0].lower()] = tag[2][:int(tag[1])]
             logbook.append(qso)    
@@ -269,28 +268,28 @@ class Log(object):
         """
         fn = ""
         while fn == "":
-            fn = raw_input("Please choose an ADIF file to import: ")
+            fn = input("Please choose an ADIF file to import: ")
             if not os.path.isfile(fn):
                 print("This file does not exist.")
                 self.import_adif()
         log = self.adif_parse(fn)
         for key in self.import_fields:
-                try:
-                    self.c.execute("ALTER TABLE log ADD COLUMN {k} TEXT".format(k = key))
-                except sqlite3.OperationalError:
-                    pass
+            try:
+                self.c.execute("ALTER TABLE log ADD COLUMN {k} TEXT".format(k = key))
+            except sqlite3.OperationalError:
+                pass
         self.db.commit()
         for qso in log:
             data_list = []
             for key in self.import_fields:
-                if key.lower() in map(str.lower, qso):
+                if key.lower() in list(map(str.lower, qso)):
                     data_list.append(qso[key.lower()])
                 else:
                     data_list.append("")
             self.c.execute("INSERT INTO log {f} VALUES {d}".format(f = tuple(self.import_fields), d = tuple(data_list)))
             percent_done = float((log.index(qso) + 1)) / float(len(log)) * 100
-            print("\rQSO record %i imported from %i QSO records (%i %% completed)" % ((log.index(qso) + 1), len(log), percent_done)),
-        self.db.commit()
+            print(f"QSO record {log.index(qso) + 1} imported from {len(log)} QSO records ({percent_done}% completed)", end=' ')
+            self.db.commit()
         log_menu.draw()
 
     def export_adif(self):
@@ -304,13 +303,13 @@ class Log(object):
         for qso in self.c.execute("""SELECT * FROM log"""):
             record = "\n"
             row += 1
-            for k in qso.keys():
+            for k in list(qso.keys()):
                 if qso[k] != None and qso[k] != "":
                     record += "<%s:%s>%s" % (k.upper(), len(qso[k]), qso[k])
             record += "<eor>\n"
             f.write(record)
             percent_done = int(row / float(total) * float(100))
-            print("\rQSO record %i exported from %i QSO records (%i %% completed)" % (row, total, percent_done)),
+            print(("\rQSO record %i exported from %i QSO records (%i %% completed)" % (row, total, percent_done)), end=' ')
         f.close()
         log_menu.draw()
 
@@ -334,17 +333,17 @@ class Menu(object):
         This function draws the menu options, provides the user choice prompt and calls the appropriate function.
         """
         clear_screen()
-        print("Callsign: %s --- Log File: %s" % (my_log.call, my_log.name))
+        print(("Callsign: %s --- Log File: %s" % (my_log.call, my_log.name)))
         if self.name == "Log Menu":
             my_log.last_five()
-        print("\n" + self.name + "\n" + "=" * 25)
+        print(("\n" + self.name + "\n" + "=" * 25))
         option_number = 1
         option_list = collections.OrderedDict()
         for option in self.options:
             option_list[str(option_number)] = option
-            print(str(option_number) + " --- " + option)
+            print((str(option_number) + " --- " + option))
             option_number += 1
-        choice = raw_input("\nPlease choose an option ")
+        choice = input("\nPlease choose an option ")
         if choice in option_list:
             self.options[option_list[choice]]()
         else:
@@ -363,7 +362,7 @@ class Table(object):
         """
         This method draws the QSO tables.
         """
-        print("\n" + self.name + "\n" + "=" * 25)
+        print(("\n" + self.name + "\n" + "=" * 25))
         qso_table = prettytable.PrettyTable()
         qso_table.field_names = self.header
         qso_table.rows = self.rows
@@ -379,7 +378,7 @@ def enter():
     """
     choice = 0
     while choice != "":
-        choice = raw_input("\nPlease press enter to continue ")
+        choice = input("\nPlease press enter to continue ")
 
 def clear_screen():
     """
@@ -397,12 +396,12 @@ def exit_simpyl():
     clear_screen()
     choice = ""
     while choice != "y" and choice != "n":
-        choice = raw_input("Are you sure you want to quit SimPyL? (y/n): ")
+        choice = input("Are you sure you want to quit SimPyL? (y/n): ")
     if choice == "n":
         start_main_menu()
     elif choice == "y":
         clear_screen()
-        print("\nTank you for using SimPyL %s" % (simpyl_version))
+        print(("\nTank you for using SimPyL %s" % (simpyl_version)))
         print("\n73 de VA2BBW!")
         print("\n--... ...--\n")
         sys.exit(0)
@@ -433,7 +432,7 @@ def start():
     """
     clear_screen()
     simpyl_logo(home_folder + "/" + "simpyl.logo.txt")
-    print("\nWelcome to SimPyL %s\n" % (simpyl_version))
+    print(("\nWelcome to SimPyL %s\n" % (simpyl_version)))
     my_log.choose_call()
     start_main_menu()
 
@@ -462,11 +461,11 @@ def start_qsl_menu():
 
 my_log = Log()
 
-qsl_lotw = qsl.Lotw("%s/%s" % (home_folder, my_log.name)
+qsl_lotw = qsl.Lotw("%s/%s" % (home_folder, my_log.name))
 
-qsl_eqsl = qsl.Eqsl("%s/%s" % (home_folder, my_log.name)
+qsl_eqsl = qsl.Eqsl("%s/%s" % (home_folder, my_log.name))
 
-qsl_clublog = qsl.Clublog("%s/%s" % (home_folder, my_log.name)
+qsl_clublog = qsl.Clublog("%s/%s" % (home_folder, my_log.name))
 
 
 main_menu = Menu(

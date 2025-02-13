@@ -1,0 +1,55 @@
+= SimPyL - The Simple Python Logger
+Ante Laurijssen, VA2BBW <antelaurijssen@gmail.com>
+v0.9.1, 02-13-2025: Finally ported to Python 3
+
+== Description:
+
+SimPyL is an amateur radio logging program for the console written in
+Python. QSOs are entered in a SQLite3 database, and can be imported
+from, and to, adif format for use with other programs.
+
+[WARNING]
+====
+This software is currently not ready for any kind of real use. It's just been recently ported over to Python 3 and is a total work-in-progress.
+====
+
+== File list:
+
+* simpyl.py
+* cty_dat_parser.py
+* qsl.py
+* simpyl.conf
+* simpyl.logo.txt
+* README.adoc
+* LICENSE.txt
+
+== Dependencies:
+
+The following third-party Python modules or software packages are needed
+to run SimPyL:
+
+* prettytable (https://pypi.org/project/prettytable)
+* SQLite (https://www.sqlite.org/)
+
+== Installation:
+
+For now, there aren't any specific installation instructions. Just download the scripts somewhere and executer them.
+
+== Configuration:
+
+All of the configuration is done through simpyl.conf. All you need to do is comment out what you don't want, and uncomment what you do want.
+
+== Change Log:
+
+* February 13, 2025
+** v0.9.1 released
+** ported to python 3
+** currently not production ready in any way
+
+* January 21st, 2018
+** v0.9 released
+
+== Contact:
+
+For information, questions or anything else SimPyL related, please email
+Ante Laurijssen, VA2BBW at antelaurijssen@gmail.com

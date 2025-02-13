@@ -46,25 +46,25 @@ class Lotw(object):
 
     def log_sign(self):
         if self.location == "":
-            self.location = raw_input("Please enter the TQSL station location to be used: ")
+            self.location = eval(input("Please enter the TQSL station location to be used: "))
         pw = getpass.getpass("Please enter your TQSL password: ")
         subprocess.call("tqsl -d -a compliant -l %s -p %s %s -o %s -x" % (self.location, pw, self.log, self.tq8))
-        print("Signing log %s..." % (self.log))
+        print(("Signing log %s..." % (self.log)))
         time.sleep(3)
 
     def log_upload(self):
         choice = 0
         while choice != "y" and choice != "n":
-            choice = raw_input("Upload log %s to LoTW? (y/n): " % (self.tq8))
+            choice = eval(input("Upload log %s to LoTW? (y/n): " % (self.tq8)))
         if choice == "n":
-            print("Log % not uploaded..." % (self.tq8))
+            print(("Log % not uploaded..." % (self.tq8)))
         elif choice == "y":
             subprocess.call("tqsl -u -l %s %s -x" % (self.location, self.tq8))
-            print("Uploading log %s to LoTW..." % (self.tq8))
+            print(("Uploading log %s to LoTW..." % (self.tq8)))
             time.sleep(3)
 
     def log_download(self):
-        uname = raw_input("Please enter your LoTW user name: ")
+        uname = eval(input("Please enter your LoTW user name: "))
         pw = getpass.getpass("Please enter your LoTW password: ")
 
 class Eqsl(object):
@@ -74,15 +74,15 @@ class Eqsl(object):
     def log_upload(self):
         choice = 0
         while choice != "y" and choice != "n":
-            choice = raw_input("Upload log %s to eqsl.cc? (y/n): " % (self.log))
+            choice = eval(input("Upload log %s to eqsl.cc? (y/n): " % (self.log)))
         if choice == "n":
-            print("Log % not uploaded..." % (self.log))
+            print(("Log % not uploaded..." % (self.log)))
         elif choice == "y":
-            print("Uploading log %s to eqsl.cc..." % (self.log))
+            print(("Uploading log %s to eqsl.cc..." % (self.log)))
             time.sleep(3)
 
     def log_download(self):
-        uname = raw_input("Please enter your eqsl.cc user name: ")
+        uname = eval(input("Please enter your eqsl.cc user name: "))
         pw = getpass.getpass("Please enter your eqsl.cc password: ")
 
 class Clublog(object):
@@ -90,7 +90,7 @@ class Clublog(object):
         self.log = log
         
     def log_upload(self):
-        uname = raw_input("Please enter your Clublog user name: ")
+        uname = eval(input("Please enter your Clublog user name: "))
         pw = getpass.getpass("Please enter your Clublog password: ")
 
 # functions
