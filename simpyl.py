@@ -62,7 +62,7 @@ import qsl
 
 # global variables
 
-simpyl_version = "v.0.9"
+simpyl_version = "v.0.9.1"
 home_folder = os.path.expanduser("~") + "/.simpyl"
     
 # configuration parser
